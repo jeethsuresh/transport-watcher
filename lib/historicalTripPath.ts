@@ -1,4 +1,5 @@
 import type Database from 'better-sqlite3';
+import { RAIL_GTFS_BUNDLE_PREFIX } from './db.js';
 
 export type HistoryPathPoint = {
   stopId: string;
@@ -72,12 +73,20 @@ function pickLatestTripFromArrivals(
   return row?.tripId ?? null;
 }
 
+/** Map GTFS-RT `trip_id` to the row stored in `gtfs_trips` (rail bundle may use `rt:` prefix). */
+function resolveStaticTripId(db: Database.Database, routeId: string, feedTripId: string): string | null {
+  const row = db
+    .prepare(
+      `SELECT trip_id AS tripId FROM gtfs_trips WHERE route_id = ? AND (trip_id = ? OR trip_id = ?)`
+    )
+    .get(routeId, feedTripId, `${RAIL_GTFS_BUNDLE_PREFIX}${feedTripId}`) as { tripId: string } | undefined;
+  return row?.tripId ?? null;
+}
+
 /** Full stop sequence from static GTFS for this trip (the whole scheduled run). */
 function pathFromGtfsStopTimes(db: Database.Database, routeId: string, tripId: string): HistoryPathPoint[] {
-  const exists = db
-    .prepare(`SELECT 1 FROM gtfs_trips WHERE trip_id = ? AND route_id = ?`)
-    .get(tripId, routeId);
-  if (!exists) return [];
+  const staticTripId = resolveStaticTripId(db, routeId, tripId);
+  if (!staticTripId) return [];
 
   const raw = db
     .prepare(
@@ -92,7 +101,7 @@ function pathFromGtfsStopTimes(db: Database.Database, routeId: string, tripId: s
        WHERE st.trip_id = ? AND t.route_id = ?
        ORDER BY st.stop_sequence ASC`
     )
-    .all(tripId, routeId) as {
+    .all(staticTripId, routeId) as {
     stopId: string;
     seq: number;
     lat: number;

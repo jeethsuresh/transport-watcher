@@ -5,7 +5,7 @@ import readline from 'node:readline';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import type Database from 'better-sqlite3';
-import { openDb, seedRoutesIfEmpty } from '../lib/db.js';
+import { openDb, RAIL_GTFS_BUNDLE_PREFIX, seedRoutesIfEmpty } from '../lib/db.js';
 import { getCsvFieldZeroBased, parseCsvLine, rowToObject } from '../lib/gtfsCsv.js';
 import { activeServiceIdsInRange, defaultTorontoDateRangeYYYYMMDD } from '../lib/gtfsCalendar.js';
 
@@ -31,7 +31,7 @@ function stopTimesBatchSize() {
   return BATCH;
 }
 
-const RAIL_TRIP_ID_PREFIX = 'rail:';
+/** Prefix trip_id and stop_id for the rapid-transit bundle so surface + rail feeds do not collide (shared numeric IDs). `route_id` stays unprefixed to match `routes` and GTFS-RT. */
 
 async function ensureZip(opts: { label: string; pathEnv: string; urlEnv: string; defaultUrl: string }) {
   const fromEnv = process.env[opts.pathEnv];
@@ -197,7 +197,13 @@ async function loadTrips(
   process.stderr.write(`Imported ${imported} trips.\n`);
 }
 
-async function streamStopTimes(gtfsDir: string, validTripIds: Set<string>, db: Database.Database, tripIdPrefix: string) {
+async function streamStopTimes(
+  gtfsDir: string,
+  validTripIds: Set<string>,
+  db: Database.Database,
+  tripIdPrefix: string,
+  stopIdPrefix = ''
+) {
   const p = path.join(gtfsDir, 'stop_times.txt');
   if (!fs.existsSync(p)) throw new Error(`Missing ${p}`);
 
@@ -252,13 +258,14 @@ async function streamStopTimes(gtfsDir: string, validTripIds: Set<string>, db: D
     if (!stopId) continue;
     const seq = parseInt(row.stop_sequence, 10);
     if (Number.isNaN(seq)) continue;
-    neededStops.add(stopId);
+    const canonicalStopId = `${stopIdPrefix || ''}${stopId}`;
+    neededStops.add(canonicalStopId);
 
     const arrival = String(row.arrival_time || '').trim() || null;
     const departure = String(row.departure_time || '').trim() || null;
 
     beginChunk();
-    ins.run(tripId, seq, stopId, arrival, departure);
+    ins.run(tripId, seq, canonicalStopId, arrival, departure);
     n += 1;
     sinceCommit += 1;
     if (sinceCommit >= chunk) {
@@ -275,7 +282,7 @@ async function streamStopTimes(gtfsDir: string, validTripIds: Set<string>, db: D
   return neededStops;
 }
 
-async function loadStops(gtfsDir: string, neededStops: Set<string>, db: Database.Database) {
+async function loadStops(gtfsDir: string, neededStops: Set<string>, db: Database.Database, stopIdPrefix = '') {
   const p = path.join(gtfsDir, 'stops.txt');
   if (!fs.existsSync(p)) throw new Error(`Missing ${p}`);
 
@@ -300,7 +307,8 @@ async function loadStops(gtfsDir: string, neededStops: Set<string>, db: Database
       continue;
     }
     const row = rowToObject(header, parseCsvLine(line));
-    const stopId = String(row.stop_id || '').trim();
+    const rawStopId = String(row.stop_id || '').trim();
+    const stopId = `${stopIdPrefix || ''}${rawStopId}`;
     if (!neededStops.has(stopId)) continue;
     const lat = parseFloat(row.stop_lat);
     const lon = parseFloat(row.stop_lon);
@@ -333,11 +341,14 @@ async function importOneBundle(
   label: string,
   tripIdPrefix: string,
   rangeStart: string,
-  rangeEnd: string
+  rangeEnd: string,
+  stopIdPrefix = '',
+  /** When set (e.g. `''`), overrides prefix applied to `route_id` in `routes` / `gtfs_trips`; defaults to `tripIdPrefix`. */
+  routeIdPrefix: string | null = null
 ) {
   process.stderr.write(`Importing ${label} (calendar ${rangeStart}–${rangeEnd})…\n`);
-  const routeIdPrefix = tripIdPrefix || '';
-  await syncRoutesFromGtfs(extractDir, db, routeIdPrefix);
+  const rpf = routeIdPrefix !== null ? routeIdPrefix : tripIdPrefix || '';
+  await syncRoutesFromGtfs(extractDir, db, rpf);
   let activeServiceIds = await activeServiceIdsInRange(extractDir, rangeStart, rangeEnd);
   if (!activeServiceIds.size) {
     process.stderr.write(
@@ -347,9 +358,9 @@ async function importOneBundle(
   }
   const validTripIds = await collectTripIdsForImport(extractDir, activeServiceIds, tripIdPrefix);
   process.stderr.write(`${label}: ${validTripIds.size} trips match window.\n`);
-  await loadTrips(extractDir, validTripIds, db, tripIdPrefix, routeIdPrefix);
-  const neededStops = await streamStopTimes(extractDir, validTripIds, db, tripIdPrefix);
-  await loadStops(extractDir, neededStops, db);
+  await loadTrips(extractDir, validTripIds, db, tripIdPrefix, rpf);
+  const neededStops = await streamStopTimes(extractDir, validTripIds, db, tripIdPrefix, stopIdPrefix);
+  await loadStops(extractDir, neededStops, db, stopIdPrefix);
 }
 
 async function main() {
@@ -384,13 +395,13 @@ async function main() {
     db.pragma('foreign_keys = OFF');
     db.exec('DELETE FROM gtfs_stop_times; DELETE FROM gtfs_trips; DELETE FROM gtfs_stops;');
 
-    process.stderr.write(`Extracting rail bundle…\n`);
-    unzip(railZip.zipPath, extractRail);
-    await importOneBundle(db, extractRail, 'rail', RAIL_TRIP_ID_PREFIX, rangeStart, rangeEnd);
-
     process.stderr.write(`Extracting surface bundle…\n`);
     unzip(surfaceZip.zipPath, extractSurface);
-    await importOneBundle(db, extractSurface, 'surface', '', rangeStart, rangeEnd);
+    await importOneBundle(db, extractSurface, 'surface', '', rangeStart, rangeEnd, '');
+
+    process.stderr.write(`Extracting rail bundle…\n`);
+    unzip(railZip.zipPath, extractRail);
+    await importOneBundle(db, extractRail, 'rail', RAIL_GTFS_BUNDLE_PREFIX, rangeStart, rangeEnd, RAIL_GTFS_BUNDLE_PREFIX, '');
 
     db.pragma('foreign_keys = ON');
     process.stderr.write('Done.\n');

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import L from 'leaflet';
 import { io as ioClient, type Socket } from 'socket.io-client';
+import { mergeTrainVehiclesFromProxiedGtfs } from './gtfsRtClient';
 
 type LineRow = {
   routeId: string;
@@ -64,6 +65,8 @@ let vehicles: VehicleRow[] = [];
 let vehicleMeta: { updatedAt: number | null; feedTimestamp: number | null } = { updatedAt: null, feedTimestamp: null };
 let selectedRouteId: string | null = null;
 let selectedStopId: string | null = null;
+/** When a stop is selected, routes from GTFS that serve it — drives map paths, stops, vehicles. */
+let servingRouteIdsForSelectedStop: string[] | null = null;
 let inspectKind: 'cluster' | 'stop' | 'route' | null = null;
 let stopMarkerGen = 0;
 let inspectPollTimer: ReturnType<typeof setInterval> | null = null;
@@ -71,7 +74,7 @@ let inspectPollTimer: ReturnType<typeof setInterval> | null = null;
 let inspectAsyncGen = 0;
 let sidebarMode = 'routes';
 let lastFitKey = '';
-let lastHistoryPinsKey = '';
+let lastHistoryPathRoutesKey = '';
 let historyPathGen = 0;
 
 const ROUTE_SECTIONS = [
@@ -83,6 +86,45 @@ const ROUTE_SECTIONS = [
 
 let expandedRouteSection = 'pinned';
 
+/** Ordered route IDs; persisted per browser profile via localStorage (not on the server). */
+const PINNED_ROUTES_STORAGE_KEY = 'ttc-watcher:pinned-route-ids-v1';
+
+function loadPinnedRouteOrderFromStorage() {
+  try {
+    const raw = localStorage.getItem(PINNED_ROUTES_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map(String).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+function savePinnedRouteOrderToStorage(routeIds) {
+  try {
+    localStorage.setItem(PINNED_ROUTES_STORAGE_KEY, JSON.stringify(routeIds));
+  } catch {
+    /* quota or private mode */
+  }
+}
+
+/** Merge local pin order into `lines` after every HTTP/socket snapshot. */
+function applyClientPinsToLines() {
+  const order = loadPinnedRouteOrderFromStorage();
+  const pos = new Map(order.map((id, i) => [id, i]));
+  for (const line of lines) {
+    const i = pos.get(line.routeId);
+    if (i !== undefined) {
+      line.pinned = true;
+      line.pinPosition = i;
+    } else {
+      line.pinned = false;
+      line.pinPosition = null;
+    }
+  }
+}
+
 let map: L.Map | undefined;
 let tileLayer: L.TileLayer | undefined;
 let historyPathLayer: L.LayerGroup | undefined;
@@ -90,6 +132,8 @@ let vehicleLayer: L.LayerGroup | undefined;
 let stopLayer: L.LayerGroup | undefined;
 let socket: Socket | null = null;
 let socketConnected = false;
+/** Coalesces overlapping client GTFS-RT merges after snapshot / HTTP refresh. */
+let clientGtfsGen = 0;
 
 function modeLabel(m) {
   switch (m) {
@@ -197,6 +241,8 @@ function htmlRouteVehicleCard(v) {
 const VEHICLE_PIN_SIZE = 30;
 /** Group stops within this distance (meters)—typical cross-street / same-intersection spacing. */
 const STOP_CLUSTER_RADIUS_M = 72;
+/** Minimum zoom when focusing the map on a selected stop (won't zoom out if already closer). */
+const STOP_FOCUS_MIN_ZOOM = 16;
 const STOPS_MAP_PANE = 'stopsAboveVehicles';
 
 /** Hide static GTFS routes at a stop unless the trip feed predicts arrival within this many minutes. */
@@ -268,6 +314,51 @@ function clusterTooltipText(cluster) {
   let t = lines.join('\n');
   if (cluster.length > maxLines) t += `\n+${cluster.length - maxLines} more`;
   return t;
+}
+
+function wireRouteInspectStopRows() {
+  if (!inspectBody) return;
+  inspectBody.querySelectorAll('tr.inspect-stop-row[data-stop-id]').forEach((row) => {
+    row.onclick = () => {
+      const id = row.getAttribute('data-stop-id');
+      if (id) selectStop(id, { pan: true });
+    };
+    row.onkeydown = (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const id = row.getAttribute('data-stop-id');
+        if (id) selectStop(id, { pan: true });
+      }
+    };
+  });
+}
+
+function selectRouteForInspect(routeId) {
+  if (!routeId) return;
+  selectedStopId = null;
+  servingRouteIdsForSelectedStop = null;
+  selectedRouteId = routeId;
+  openInspectRoute(routeId);
+  renderStopSearchResultsHighlight();
+  render();
+}
+
+function wireStopInspectLineRows() {
+  const el = document.getElementById('inspect-body') ?? inspectBody;
+  if (!el) return;
+  el.querySelectorAll('tr.inspect-line-row[data-route-id]').forEach((row) => {
+    row.onclick = () => {
+      const id = row.getAttribute('data-route-id');
+      if (id) selectRouteForInspect(id);
+    };
+    row.onkeydown = (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const id = row.getAttribute('data-route-id');
+        if (id) selectRouteForInspect(id);
+      }
+    };
+  });
 }
 
 function wireClusterInspectBody() {
@@ -375,6 +466,7 @@ function openClusterInspect(cluster) {
   const gen = inspectAsyncGen;
   inspectKind = 'cluster';
   selectedStopId = null;
+  servingRouteIdsForSelectedStop = null;
   inspectPanel.hidden = false;
   inspectPanel.classList.add('inspect-panel--cluster');
   clearInspectPoll();
@@ -435,20 +527,26 @@ function initMap() {
   });
 }
 
-/** Routes whose live vehicles are drawn on the map (pinned ∪ selected). */
+/** Routes whose live vehicles are drawn on the map (pinned ∪ selected route ∪ routes serving selected stop). */
 function visibleRouteIdsForVehicles() {
   const pinned = lines.filter((l) => l.pinned).map((l) => l.routeId);
   const set = new Set(pinned);
   if (selectedRouteId) set.add(selectedRouteId);
+  if (selectedStopId && servingRouteIdsForSelectedStop?.length) {
+    for (const id of servingRouteIdsForSelectedStop) set.add(id);
+  }
   return set;
 }
 
 /**
- * Routes used to place stop markers: selected line only when one is focused, otherwise all pinned.
- * Avoids showing every pinned line's stops while inspecting a single route.
+ * Routes used to place stop markers and history paths: sidebar-selected route, else routes at selected stop, else pinned.
  */
 function visibleRouteIdsForStopMarkers() {
   if (selectedRouteId) return new Set([selectedRouteId]);
+  if (selectedStopId) {
+    if (servingRouteIdsForSelectedStop === null) return new Set();
+    return new Set(servingRouteIdsForSelectedStop);
+  }
   const pinned = lines.filter((l) => l.pinned).map((l) => l.routeId);
   return new Set(pinned);
 }
@@ -467,6 +565,7 @@ function closeInspectPanel() {
   inspectPanel.classList.remove('inspect-panel--cluster');
   inspectKind = null;
   selectedStopId = null;
+  servingRouteIdsForSelectedStop = null;
   clearInspectPoll();
   inspectBody.innerHTML = '';
   inspectTitle.textContent = '';
@@ -501,7 +600,7 @@ async function syncStopMarkers() {
 
   for (const cluster of clusters) {
     const { lat, lon } = clusterCentroid(cluster);
-    const isSel = cluster.some((s) => selectedStopId === s.stopId);
+    const isSel = cluster.some((s) => String(s.stopId) === String(selectedStopId));
     const m = L.circleMarker([lat, lon], {
       pane: STOPS_MAP_PANE,
       radius: isSel ? 8 : cluster.length > 1 ? 6 : 4,
@@ -527,23 +626,28 @@ async function syncStopMarkers() {
 function selectStop(stopId, opts: { pan?: boolean } = {}) {
   if (!inspectPanel || !inspectBody) return;
   inspectAsyncGen++;
-  selectedStopId = stopId;
+  const sid = String(stopId);
+  selectedStopId = sid;
+  selectedRouteId = null;
+  servingRouteIdsForSelectedStop = null;
   inspectKind = 'stop';
   inspectPanel.classList.remove('inspect-panel--cluster');
   inspectPanel.hidden = false;
+  inspectBody.innerHTML = '<p class="inspect-loading">Loading…</p>';
   clearInspectPoll();
   inspectPollTimer = setInterval(() => {
     if (inspectKind === 'stop' && selectedStopId) void refreshStopInspectBody(selectedStopId);
   }, 15000);
-  void refreshStopInspectBody(stopId);
+  void refreshStopInspectBody(sid);
   if (opts.pan && map) {
     void (async () => {
       try {
-        const r = await fetch(`/api/stops/${encodeURIComponent(stopId)}`);
+        const r = await fetch(`/api/stops/${encodeURIComponent(sid)}`);
         if (r.ok) {
           const d = await r.json();
           if (map && d.stop?.lat != null && d.stop?.lon != null) {
-            map.panTo([d.stop.lat, d.stop.lon], { animate: true });
+            const z = Math.max(STOP_FOCUS_MIN_ZOOM, map.getZoom());
+            map.flyTo([d.stop.lat, d.stop.lon], z, { animate: true, duration: 1.1 });
           }
         }
       } catch {
@@ -552,27 +656,43 @@ function selectStop(stopId, opts: { pan?: boolean } = {}) {
     })();
   }
   renderStopSearchResultsHighlight();
-  void syncStopMarkers();
+  render();
 }
 
 async function refreshStopInspectBody(stopId) {
-  if (inspectKind !== 'stop' || selectedStopId !== stopId) return;
-  if (!inspectTitle || !inspectBody) return;
+  const sid = String(stopId);
+  if (inspectKind !== 'stop' || String(selectedStopId) !== sid) return;
+  const bodyEl = document.getElementById('inspect-body') ?? inspectBody;
+  const titleEl = document.getElementById('inspect-title') ?? inspectTitle;
+  if (!bodyEl) return;
   try {
-    const res = await fetch(`/api/stops/${encodeURIComponent(stopId)}`);
+    const res = await fetch(`/api/stops/${encodeURIComponent(sid)}`);
+    if (inspectKind !== 'stop' || String(selectedStopId) !== sid) return;
     if (!res.ok) {
-      inspectTitle.textContent = 'Stop';
-      inspectBody.innerHTML = `<p>${res.status === 404 ? 'Stop not found.' : 'Could not load stop.'}</p>`;
+      if (titleEl) titleEl.textContent = 'Stop';
+      servingRouteIdsForSelectedStop = null;
+      bodyEl.innerHTML = `<p>${res.status === 404 ? 'Stop not found.' : 'Could not load stop.'}</p>`;
+      updateMapMarkers(false);
       return;
     }
     const data = await res.json();
-    inspectTitle.textContent = data.stop?.stopName || stopId;
-    const soonLines = (data.lines || []).filter(lineHasImminentArrival);
-    const linesRows = soonLines
+    if (inspectKind !== 'stop' || String(selectedStopId) !== sid) return;
+    if (!data.stop) {
+      servingRouteIdsForSelectedStop = null;
+      bodyEl.innerHTML = '<p>Invalid stop response from server.</p>';
+      if (titleEl) titleEl.textContent = 'Stop';
+      updateMapMarkers(false);
+      return;
+    }
+    if (titleEl) titleEl.textContent = data.stop.stopName || sid;
+    const allLines = data.lines || [];
+    const linesRows = allLines
       .map((ln) => {
         const dest =
           (ln.tripHeadsign && String(ln.tripHeadsign).trim()) || ln.longName || '—';
-        return `<tr><td><strong>${escapeHtml(ln.shortName)}</strong> <span class="stop-card__id">${escapeHtml(
+        const rid = escapeHtml(ln.routeId);
+        const label = escapeHtml(ln.shortName);
+        return `<tr class="inspect-line-row" data-route-id="${rid}" tabindex="0" role="button" aria-label="View route ${label}"><td><strong>${label}</strong> <span class="stop-card__id">${escapeHtml(
           modeLabel(ln.mode)
         )}</span></td><td>${escapeHtml(dest)}</td><td>${formatEtaMins(ln.minutesUntil)}</td></tr>`;
       })
@@ -589,25 +709,33 @@ async function refreshStopInspectBody(stopId) {
         </p>
         <p class="inspect-loading" style="margin:0">From ${hw.gapSampleCount} inter-arrival gaps (${hw.windowArrivalCount} arrivals in time band). Sparse data means wider uncertainty.</p>
       </div>`;
-    inspectBody.innerHTML = `
-      <p class="stop-card__id" style="margin:0 0 0.5rem">ID ${escapeHtml(data.stop.stopId)} · trip updates ${formatTime(data.tripFeedTimestamp)}</p>
-      ${headwayBlock || ''}
+    bodyEl.innerHTML = `
+      <p class="stop-card__id" style="margin:0 0 0.5rem">ID ${escapeHtml(data.stop.stopId)} · trip updates ${formatTime(data.tripFeedTimestamp)} · vehicles ${formatTime(data.vehicleFeedTimestamp)}</p>
       <div class="inspect-section">
-        <h3>Arriving soon (live feed)</h3>
-        <table class="inspect-table">
-          <thead><tr><th>Line</th><th>Towards</th><th>Next arrival (approx.)</th></tr></thead>
-          <tbody>${
-            linesRows ||
-            '<tr><td colspan="3">No imminent arrivals in the trip feed for this stop (within ' +
-              ARRIVAL_SOON_MAX_MINUTES +
-              ' min).</td></tr>'
-          }</tbody>
-        </table>
+        <h3>Lines serving this stop</h3>
+        <div style="max-height:min(32vh,240px);overflow:auto">
+          <table class="inspect-table">
+            <thead><tr><th>Line</th><th>Towards</th><th>Next arrival</th></tr></thead>
+            <tbody>${
+              linesRows ||
+              '<tr><td colspan="3">No routes in static GTFS include this stop.</td></tr>'
+            }</tbody>
+          </table>
+        </div>
+        <p class="inspect-loading" style="margin:0.45rem 0 0">Next arrival from the trip feed when available; — means no prediction for this stop yet. Click a row to open the route.</p>
       </div>
-      <p class="inspect-loading" style="margin-top:0.5rem">Only routes with a matching GTFS-RT prediction are listed (within ~${ARRIVAL_SOON_MAX_MINUTES} min).</p>
+      ${headwayBlock || ''}
     `;
+    servingRouteIdsForSelectedStop = allLines.map((ln) => String(ln.routeId));
+    wireStopInspectLineRows();
+    updateMapMarkers(false);
   } catch {
-    inspectBody.innerHTML = '<p>Failed to load stop.</p>';
+    if (inspectKind === 'stop' && String(selectedStopId) === sid) {
+      servingRouteIdsForSelectedStop = null;
+      const el = document.getElementById('inspect-body') ?? inspectBody;
+      if (el) el.innerHTML = '<p>Failed to load stop.</p>';
+      updateMapMarkers(false);
+    }
   }
 }
 
@@ -632,12 +760,13 @@ async function refreshRouteInspectBody(routeId) {
     const vehBlocks = vehList.map((v) => htmlRouteVehicleCard(v)).join('');
     const vehCount = vehList.length;
     const stopRows = (data.stopArrivals || [])
-      .map(
-        (s) =>
-          `<tr><td>${escapeHtml(s.stopName)}</td><td>${formatEtaMins(s.minutesUntil)}</td><td class="stop-card__id">${escapeHtml(
-            s.stopId
-          )}</td></tr>`
-      )
+      .map((s) => {
+        const sid = escapeHtml(s.stopId);
+        const label = escapeHtml(s.stopName);
+        return `<tr class="inspect-stop-row" data-stop-id="${sid}" tabindex="0" role="button" aria-label="Select stop ${label}"><td>${label}</td><td>${formatEtaMins(
+          s.minutesUntil
+        )}</td><td class="stop-card__id">${sid}</td></tr>`;
+      })
       .join('');
     inspectBody.innerHTML = `
       <p class="inspect-loading" style="margin:0 0 0.65rem">Trip feed ${formatTime(data.tripFeedTimestamp)} · vehicles ${formatTime(
@@ -662,6 +791,7 @@ async function refreshRouteInspectBody(routeId) {
         </div>
       </details>
     `;
+    wireRouteInspectStopRows();
   } catch {
     inspectBody.innerHTML = '<p>Failed to load route.</p>';
   }
@@ -697,9 +827,27 @@ function updateStatusBar() {
     : `${lines.length} lines · ${vc} vehicles${via}`;
 }
 
+async function enrichVehiclesWithClientGtfs() {
+  const trainIds = new Set(lines.filter((l) => l.mode === 'train_lrt').map((l) => l.routeId));
+  if (trainIds.size === 0) return;
+  const g = ++clientGtfsGen;
+  try {
+    const { vehicles: merged, meta } = await mergeTrainVehiclesFromProxiedGtfs(vehicles, vehicleMeta, trainIds);
+    if (g !== clientGtfsGen) return;
+    vehicles = merged;
+    vehicleMeta = meta;
+  } catch {
+    if (g !== clientGtfsGen) return;
+  }
+  updateStatusBar();
+  render();
+  updateMapMarkers(false);
+}
+
 function applySnapshot(data) {
   if (!data || !Array.isArray(data.lines)) return;
   lines = data.lines;
+  applyClientPinsToLines();
   vehicles = data.vehicles || [];
   vehicleMeta = {
     updatedAt: data.vehicleUpdatedAt,
@@ -707,6 +855,7 @@ function applySnapshot(data) {
   };
   updateStatusBar();
   render();
+  void enrichVehiclesWithClientGtfs();
   if (inspectKind === 'route' && selectedRouteId) void refreshRouteInspectBody(selectedRouteId);
   if (inspectKind === 'stop' && selectedStopId) void refreshStopInspectBody(selectedStopId);
 }
@@ -714,16 +863,19 @@ function applySnapshot(data) {
 async function syncHistoryPathOverlays() {
   if (!map || !historyPathLayer) return;
   const pinned = lines.filter((l) => l.pinned).map((l) => l.routeId);
-  const key = pinned.slice().sort().join(',');
-  if (key === lastHistoryPinsKey) return;
-  lastHistoryPinsKey = key;
+  const fromSelectedStop =
+    selectedStopId && servingRouteIdsForSelectedStop?.length ? servingRouteIdsForSelectedStop : [];
+  const routeIds = [...new Set([...pinned, ...fromSelectedStop])];
+  const key = routeIds.slice().sort().join(',');
+  if (key === lastHistoryPathRoutesKey) return;
+  lastHistoryPathRoutesKey = key;
   const gen = ++historyPathGen;
   historyPathLayer.clearLayers();
-  if (!pinned.length) return;
+  if (!routeIds.length) return;
 
   const names = shortNameByRouteId();
   await Promise.all(
-    pinned.map(async (routeId) => {
+    routeIds.map(async (routeId) => {
       try {
         const res = await fetch(`/api/routes/${encodeURIComponent(routeId)}/history-path`);
         if (!res.ok) return;
@@ -786,7 +938,8 @@ function updateMapMarkers(shouldFit) {
   }
 
   const pinned = lines.filter((l) => l.pinned).map((l) => l.routeId);
-  const fitKey = `${selectedRouteId || ''}|${pinned.slice().sort().join(',')}`;
+  const servingKey = (servingRouteIdsForSelectedStop || []).slice().sort().join(',');
+  const fitKey = `${selectedRouteId || ''}|${pinned.slice().sort().join(',')}|${selectedStopId || ''}|${servingKey}`;
   if (shouldFit || fitKey !== lastFitKey) {
     lastFitKey = fitKey;
     if (latlngs.length) {
@@ -799,18 +952,23 @@ function updateMapMarkers(shouldFit) {
 
   const pinCount = pinned.length;
   const selName = selectedRouteId ? names.get(selectedRouteId) || selectedRouteId : null;
+  const servingN = servingRouteIdsForSelectedStop?.length ?? 0;
   if (mapLegendEl) {
-    if (!pinCount && !selectedRouteId) {
+    if (!pinCount && !selectedRouteId && !(selectedStopId && servingN)) {
       mapLegendEl.hidden = false;
       mapLegendEl.innerHTML =
-        '<strong>No routes on the map.</strong> Pin routes or select one in the list to plot live vehicles.';
+        '<strong>No routes on the map.</strong> Pin routes, select a line, or open a stop to plot paths and vehicles.';
     } else {
       mapLegendEl.hidden = false;
       const bits = [];
       if (pinCount) bits.push(`<strong>${pinCount}</strong> pinned route(s) always shown`);
       if (selName) bits.push(`selected <strong>${selName}</strong>`);
+      if (selectedStopId && servingN) {
+        bits.push(`<strong>${servingN}</strong> route(s) at selected stop (paths + markers)`);
+      }
       bits.push(`<strong>${visible.length}</strong> vehicle marker(s) · feed ${formatTime(vehicleMeta.feedTimestamp)}`);
       if (selectedRouteId) bits.push('stop markers: <strong>selected</strong> route only');
+      else if (selectedStopId && servingN) bits.push('stop markers: routes <strong>serving</strong> that stop');
       else if (pinCount) bits.push('stop markers: <strong>pinned</strong> routes');
       mapLegendEl.innerHTML = bits.join(' · ');
     }
@@ -963,6 +1121,7 @@ function buildLineCard(line, { compact, onSelect }) {
     const next = selectedRouteId === line.routeId ? null : line.routeId;
     selectedRouteId = next;
     selectedStopId = null;
+    servingRouteIdsForSelectedStop = null;
     if (next) openInspectRoute(next);
     else closeInspectPanel();
     onSelect();
@@ -1054,19 +1213,15 @@ function render() {
   updateMapMarkers(false);
 }
 
-async function togglePin(routeId) {
+function togglePin(routeId) {
   const line = lines.find((l) => l.routeId === routeId);
   const pinnedIds = lines.filter((l) => l.pinned).map((l) => l.routeId);
   let next;
   if (line && line.pinned) next = pinnedIds.filter((id) => id !== routeId);
   else next = [...pinnedIds, routeId];
-  await fetch('/api/pins', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ routeIds: next }),
-  });
-  if (socket?.connected) socket.emit('snapshot:request');
-  else await refreshHttp();
+  savePinnedRouteOrderToStorage(next);
+  applyClientPinsToLines();
+  render();
   updateMapMarkers(true);
 }
 
@@ -1079,6 +1234,7 @@ async function refreshHttp() {
   }
   const data = await lr.json();
   lines = data.lines || [];
+  applyClientPinsToLines();
 
   if (vr.ok) {
     const vdata = await vr.json();
@@ -1091,6 +1247,7 @@ async function refreshHttp() {
 
   updateStatusBar();
   render();
+  void enrichVehiclesWithClientGtfs();
   if (inspectKind === 'route' && selectedRouteId) void refreshRouteInspectBody(selectedRouteId);
   if (inspectKind === 'stop' && selectedStopId) void refreshStopInspectBody(selectedStopId);
 }

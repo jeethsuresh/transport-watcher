@@ -28,6 +28,13 @@ import {
 } from './lib/snapshot.js';
 import * as gtfsLive from './lib/gtfsLive.js';
 import { buildHistoricalTripPath } from './lib/historicalTripPath.js';
+import { ALERTS_URL, TRIPS_URL, VEHICLES_URL } from './lib/gtfsRt.js';
+
+const GTFS_RT_PROXY: Record<string, string> = {
+  trips: TRIPS_URL,
+  vehicles: VEHICLES_URL,
+  alerts: ALERTS_URL,
+};
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dev = process.env.NODE_ENV !== 'production';
@@ -70,25 +77,30 @@ async function main() {
     res.json({ lines: list, count: list.length });
   });
 
-  app.post('/api/pins', (req: Request, res: Response) => {
-    const ids = req.body && Array.isArray(req.body.routeIds) ? req.body.routeIds.map(String) : [];
-    const valid = new Set(
-      (db.prepare('SELECT route_id FROM routes').all() as { route_id: string }[]).map((r) => r.route_id)
-    );
-    const filtered = ids.filter((id: string) => valid.has(id));
-    db.transaction(() => {
-      db.prepare('DELETE FROM pins').run();
-      const ins = db.prepare('INSERT INTO pins (route_id, position) VALUES (?, ?)');
-      filtered.forEach((id: string, i: number) => ins.run(id, i));
-    })();
-    res.json({ ok: true, routeIds: filtered });
-    if (io) {
-      io.to('live').emit('snapshot', buildSnapshot(db, poller));
-    }
-  });
-
   app.get('/api/vehicles', (_req: Request, res: Response) => {
     res.json(buildVehiclesPayload(poller));
+  });
+
+  /** Same-origin proxy for browser GTFS-RT fetches (TTC does not send CORS headers). */
+  app.get('/api/gtfs-rt/:feed', async (req: Request, res: Response) => {
+    const feed = pathParam(req.params.feed);
+    const url = GTFS_RT_PROXY[feed];
+    if (!url) return res.status(404).json({ error: 'Unknown feed' });
+    try {
+      const upstream = await fetch(url, {
+        headers: { Accept: 'application/x-protobuf, application/octet-stream, */*' },
+      });
+      if (!upstream.ok) {
+        res.status(upstream.status).send(await upstream.text());
+        return;
+      }
+      const buf = Buffer.from(await upstream.arrayBuffer());
+      res.setHeader('Content-Type', upstream.headers.get('content-type') || 'application/x-protobuf');
+      res.setHeader('Cache-Control', 'no-store');
+      res.send(buf);
+    } catch (e) {
+      res.status(502).json({ error: e instanceof Error ? e.message : 'GTFS-RT proxy failed' });
+    }
   });
 
   app.get('/api/history/:routeId', (req: Request, res: Response) => {
@@ -125,11 +137,22 @@ async function main() {
     }
     const stopId = decodeURIComponent(pathParam(req.params.stopId));
     const tripSnap = poller.getTripUpdatesSnapshot();
+    const vs = poller.getVehicleSnapshot();
     const detail = gtfsLive.stopDetail(db, tripSnap, stopId);
     if (!detail) return res.status(404).json({ error: 'Unknown stop' });
+    const routeIds = new Set(detail.lines.map((l) => l.routeId));
+    const vehicles = vs.vehicles
+      .filter((v) => routeIds.has(v.routeId))
+      .map((v) => {
+        const pos = gtfsLive.describeVehiclePosition(db, v);
+        const tripHeadsign = gtfsLive.tripHeadsignForTripId(db, v.tripId, v.routeId);
+        return { ...v, ...pos, tripHeadsign };
+      });
     res.json({
       ...detail,
       tripFeedTimestamp: tripSnap.feedTimestamp,
+      vehicleFeedTimestamp: vs.feedTimestamp,
+      vehicles,
     });
   });
 
@@ -163,7 +186,7 @@ async function main() {
       .filter((v) => v.routeId === routeId)
       .map((v) => {
         const pos = gtfsLive.describeVehiclePosition(db, v);
-        const tripHeadsign = gtfsLive.hasGtfsData(db) ? gtfsLive.tripHeadsignForTripId(db, v.tripId) : null;
+        const tripHeadsign = gtfsLive.hasGtfsData(db) ? gtfsLive.tripHeadsignForTripId(db, v.tripId, v.routeId) : null;
         return { ...v, ...pos, tripHeadsign };
       });
     const stopArrivals = gtfsLive.hasGtfsData(db) ? gtfsLive.stopArrivalsAlongRoute(db, tripSnap, routeId) : [];

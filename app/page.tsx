@@ -155,7 +155,7 @@ export default function HomePage() {
         <div id="map-legend" className="map-legend" hidden />
         <div id="inspect-panel" className="inspect-panel" hidden>
           <div className="inspect-panel__head">
-            <h2 id="inspect-title" className="inspect-panel__title" />
+            <h2 id="inspect-title" className="inspect-panel__title"></h2>
             <button type="button" id="inspect-close" className="inspect-close" aria-label="Close panel">
               ×
             </button>

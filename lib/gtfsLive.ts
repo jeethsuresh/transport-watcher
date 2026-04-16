@@ -3,6 +3,7 @@
  */
 
 import type Database from 'better-sqlite3';
+import { RAIL_GTFS_BUNDLE_PREFIX } from './db.js';
 import { computeStopHeadwayHeuristic } from './stopHeadway.js';
 import type { ParsedVehicle, TripUpdatesSnapshot } from './gtfsRt.js';
 
@@ -59,11 +60,28 @@ function nextArrivalUnixForRouteAtStop(tripSnap: TripSnap, routeId: string, stop
   return nextArrivalTripForRouteAtStop(tripSnap, routeId, stopId).unix;
 }
 
-export function tripHeadsignForTripId(db: Database.Database, tripId: string | null) {
+export function tripHeadsignForTripId(db: Database.Database, tripId: string | null, routeId?: string | null) {
   if (!tripId) return null;
-  const row = db.prepare('SELECT trip_headsign AS tripHeadsign FROM gtfs_trips WHERE trip_id = ?').get(tripId) as
-    | { tripHeadsign: string | null }
-    | undefined;
+  const tid = String(tripId).trim();
+  if (!tid) return null;
+  let row: { tripHeadsign: string | null } | undefined;
+  if (routeId) {
+    row = db
+      .prepare(
+        `SELECT trip_headsign AS tripHeadsign FROM gtfs_trips
+         WHERE route_id = ? AND (trip_id = ? OR trip_id = ?)`
+      )
+      .get(String(routeId), tid, `${RAIL_GTFS_BUNDLE_PREFIX}${tid}`) as { tripHeadsign: string | null } | undefined;
+  } else {
+    row = db.prepare('SELECT trip_headsign AS tripHeadsign FROM gtfs_trips WHERE trip_id = ?').get(tid) as
+      | { tripHeadsign: string | null }
+      | undefined;
+    if (!row?.tripHeadsign) {
+      row = db
+        .prepare('SELECT trip_headsign AS tripHeadsign FROM gtfs_trips WHERE trip_id = ?')
+        .get(`${RAIL_GTFS_BUNDLE_PREFIX}${tid}`) as { tripHeadsign: string | null } | undefined;
+    }
+  }
   return row && row.tripHeadsign ? String(row.tripHeadsign).trim() || null : null;
 }
 
@@ -204,7 +222,7 @@ export function stopDetail(db: Database.Database, tripSnap: TripSnap, stopId: st
   const t0 = nowSec();
   const arrivals = lines.map((line) => {
     const { unix, tripId } = nextArrivalTripForRouteAtStop(tripSnap, line.routeId, stopId);
-    const tripHeadsign = tripHeadsignForTripId(db, tripId);
+    const tripHeadsign = tripHeadsignForTripId(db, tripId, line.routeId);
     return {
       routeId: line.routeId,
       shortName: line.shortName,

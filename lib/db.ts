@@ -7,6 +7,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const DEFAULT_DB = path.join(__dirname, '..', 'data', 'ttc-watcher.db');
 
+/** Rail static GTFS uses this prefix on `trip_id` and `stop_id` so surface + rail bundles can coexist. GTFS-RT still uses unprefixed ids. */
+export const RAIL_GTFS_BUNDLE_PREFIX = 'rt:';
+
 function openDb(dbPath: string = process.env.SQLITE_PATH || DEFAULT_DB): Database.Database {
   const dir = path.dirname(dbPath);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });

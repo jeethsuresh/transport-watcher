@@ -63,8 +63,9 @@ POLL_INTERVAL_MS=90000 MYTTC_EVERY_N_POLLS=5 SQLITE_PATH=/var/lib/ttc/watcher.db
 - `GET /api/health` — liveness
 - `GET /api/lines` — optional query `q`, `mode` (`bus` \| `streetcar` \| `train_lrt`)
 - `GET /api/vehicles` — latest vehicle snapshot from the last successful poll
-- `POST /api/pins` — body `{ "routeIds": ["501", "2", …] }` (pin order)
 - `GET /api/history/:routeId` — query `limit` (default 200, max 2000)
+
+Pinned routes are stored only in the browser (`localStorage`, key `ttc-watcher:pinned-route-ids-v1`), per browser profile—not on the server.
 
 ## Socket.IO
 
@@ -81,8 +82,6 @@ Connect to the same origin and path `/socket.io`. Transports: **WebSocket**, fal
 **Server → client**
 
 - `snapshot` — `{ lines, count, vehicleUpdatedAt, vehicleFeedTimestamp, vehicleCount, vehicles }` (full line list; the web UI filters search/mode in the browser)
-
-Pin changes (`POST /api/pins`) also broadcast `snapshot` to room `live`.
 
 ## Client refresh behavior
 

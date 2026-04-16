@@ -912,6 +912,22 @@ details.inspect-section--collapsible[open] > .inspect-section__summary::before {
   font-weight: 600;
 }
 
+.inspect-table tr.inspect-stop-row,
+.inspect-table tr.inspect-line-row {
+  cursor: pointer;
+}
+
+.inspect-table tr.inspect-stop-row:hover,
+.inspect-table tr.inspect-line-row:hover {
+  background: rgba(77, 163, 255, 0.08);
+}
+
+.inspect-table tr.inspect-stop-row:focus-visible,
+.inspect-table tr.inspect-line-row:focus-visible {
+  outline: 2px solid rgba(77, 163, 255, 0.55);
+  outline-offset: -2px;
+}
+
 .inspect-vehicle {
   margin: 0 0 0.45rem;
   padding: 0.4rem 0.45rem;

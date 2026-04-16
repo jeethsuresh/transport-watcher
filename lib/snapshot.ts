@@ -4,32 +4,16 @@
 
 import type Database from 'better-sqlite3';
 
-/** Rail GTFS uses `rail:` on trip ids; `syncRoutesFromGtfs` also prefixed route_ids. Surface import adds the same lines again without the prefix → duplicate sidebar cards for the same service. Keep the unprefixed row when names + mode match; keep both when they differ (e.g. `1` shuttle bus vs `rail:1` subway). */
-function isRedundantPrefixedRailRoute(
-  row: { route_id: string; short_name: string; long_name: string; mode: string },
-  byRouteId: Map<string, { route_id: string; short_name: string; long_name: string; mode: string }>
-): boolean {
-  if (!row.route_id.startsWith('rail:')) return false;
-  const bare = row.route_id.slice('rail:'.length);
-  const twin = byRouteId.get(bare);
-  if (!twin) return false;
-  return twin.short_name === row.short_name && twin.long_name === row.long_name && twin.mode === row.mode;
-}
-
 export function buildLinesList(db: Database.Database) {
+  /** Pin state is applied in the browser (localStorage), not on the server. */
   const routes = db
     .prepare(
       `SELECT r.route_id, r.short_name, r.long_name, r.mode,
               s.updated_at, s.active_trips, s.max_delay_sec, s.avg_delay_sec,
-              s.delayed_trip_count, s.alert_count, s.alert_headers, s.feed_timestamp,
-              CASE WHEN p.route_id IS NOT NULL OR p_rail.route_id IS NOT NULL THEN 1 ELSE 0 END AS pinned,
-              COALESCE(p.position, p_rail.position) AS pin_position
+              s.delayed_trip_count, s.alert_count, s.alert_headers, s.feed_timestamp
        FROM routes r
        LEFT JOIN line_status s ON s.route_id = r.route_id
-       LEFT JOIN pins p ON p.route_id = r.route_id
-       LEFT JOIN pins p_rail
-         ON p_rail.route_id = ('rail:' || r.route_id) AND r.route_id NOT LIKE 'rail:%'
-       ORDER BY pinned DESC, pin_position ASC, r.mode ASC, CAST(r.short_name AS INTEGER), r.short_name`
+       ORDER BY r.mode ASC, CAST(r.short_name AS INTEGER), r.short_name`
     )
     .all() as {
     route_id: string;
@@ -44,12 +28,7 @@ export function buildLinesList(db: Database.Database) {
     alert_count: number | null;
     alert_headers: string | null;
     feed_timestamp: number | null;
-    pinned: number;
-    pin_position: number | null;
   }[];
-
-  const byRouteId = new Map(routes.map((r) => [r.route_id, r]));
-  const deduped = routes.filter((r) => !isRedundantPrefixedRailRoute(r, byRouteId));
 
   const myttcStmt = db.prepare(
     `SELECT station_uri, next_departure_unix, next_headsign, fetched_at
@@ -59,7 +38,7 @@ export function buildLinesList(db: Database.Database) {
      LIMIT 1`
   );
 
-  const list = deduped.map((row) => {
+  const list = routes.map((row) => {
     let alertHeaders: string[] | null = null;
     if (row.alert_headers) {
       try {
@@ -76,16 +55,13 @@ export function buildLinesList(db: Database.Database) {
           fetched_at: number;
         }
       | undefined;
-    if (!myttcRow && !row.route_id.startsWith('rail:')) {
-      myttcRow = myttcStmt.get(`rail:${row.route_id}`) as typeof myttcRow;
-    }
     return {
       routeId: row.route_id,
       shortName: row.short_name,
       longName: row.long_name,
       mode: row.mode,
-      pinned: !!row.pinned,
-      pinPosition: row.pin_position,
+      pinned: false,
+      pinPosition: null,
       status: {
         updatedAt: row.updated_at,
         activeTrips: row.active_trips,
