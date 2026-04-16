@@ -1,0 +1,23 @@
+# dependencies & build output (rebuilt in image)
+node_modules
+.next
+
+# git / editor
+.git
+.gitignore
+.cursor
+
+# local data (mount a volume for the DB instead)
+data/*.db
+data/*.db-*
+
+# docs
+*.md
+
+# env files (pass via -e or compose)
+.env
+.env.*
+
+# logs / OS
+npm-debug.log*
+.DS_Store

@@ -1,0 +1,1612 @@
+[
+  {
+    "route_id": "1",
+    "short_name": "1",
+    "long_name": "Line 1 (Yonge-University)",
+    "mode": "train_lrt",
+    "route_type": 1
+  },
+  {
+    "route_id": "2",
+    "short_name": "2",
+    "long_name": "Line 2 (Bloor - Danforth)",
+    "mode": "train_lrt",
+    "route_type": 1
+  },
+  {
+    "route_id": "4",
+    "short_name": "4",
+    "long_name": "Line 4 (Sheppard)",
+    "mode": "train_lrt",
+    "route_type": 1
+  },
+  {
+    "route_id": "5",
+    "short_name": "5",
+    "long_name": "Line 5 Eglinton",
+    "mode": "train_lrt",
+    "route_type": 0
+  },
+  {
+    "route_id": "6",
+    "short_name": "6",
+    "long_name": "Line 6 Finch West",
+    "mode": "train_lrt",
+    "route_type": 0
+  },
+  {
+    "route_id": "7",
+    "short_name": "7",
+    "long_name": "Bathurst",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "8",
+    "short_name": "8",
+    "long_name": "Broadview",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "9",
+    "short_name": "9",
+    "long_name": "Bellamy",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "10",
+    "short_name": "10",
+    "long_name": "Van Horne",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "11",
+    "short_name": "11",
+    "long_name": "Bayview",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "12",
+    "short_name": "12",
+    "long_name": "Kingston Rd",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "13",
+    "short_name": "13",
+    "long_name": "Avenue Rd",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "14",
+    "short_name": "14",
+    "long_name": "Glencairn",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "15",
+    "short_name": "15",
+    "long_name": "Evans",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "16",
+    "short_name": "16",
+    "long_name": "McCowan",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "17",
+    "short_name": "17",
+    "long_name": "Birchmount",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "18",
+    "short_name": "18",
+    "long_name": "Caledonia",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "19",
+    "short_name": "19",
+    "long_name": "Bay",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "20",
+    "short_name": "20",
+    "long_name": "Cliffside",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "21",
+    "short_name": "21",
+    "long_name": "Brimley",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "22",
+    "short_name": "22",
+    "long_name": "Coxwell",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "23",
+    "short_name": "23",
+    "long_name": "Dawes",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "24",
+    "short_name": "24",
+    "long_name": "Victoria Park",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "25",
+    "short_name": "25",
+    "long_name": "Don Mills",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "26",
+    "short_name": "26",
+    "long_name": "Dupont",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "27",
+    "short_name": "27",
+    "long_name": "Jane South",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "28",
+    "short_name": "28",
+    "long_name": "Bayview South",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "29",
+    "short_name": "29",
+    "long_name": "Dufferin",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "30",
+    "short_name": "30",
+    "long_name": "High Park North",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "31",
+    "short_name": "31",
+    "long_name": "Greenwood",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "32",
+    "short_name": "32",
+    "long_name": "Eglinton West",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "33",
+    "short_name": "33",
+    "long_name": "Forest Hill",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "34",
+    "short_name": "34",
+    "long_name": "Eglinton",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "35",
+    "short_name": "35",
+    "long_name": "Jane",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "36",
+    "short_name": "36",
+    "long_name": "Finch West",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "37",
+    "short_name": "37",
+    "long_name": "Islington",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "38",
+    "short_name": "38",
+    "long_name": "Highland Creek",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "39",
+    "short_name": "39",
+    "long_name": "Finch East",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "40",
+    "short_name": "40",
+    "long_name": "Junction-Dundas West",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "41",
+    "short_name": "41",
+    "long_name": "Keele",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "42",
+    "short_name": "42",
+    "long_name": "Cummer",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "43",
+    "short_name": "43",
+    "long_name": "Kennedy",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "44",
+    "short_name": "44",
+    "long_name": "Kipling South",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "45",
+    "short_name": "45",
+    "long_name": "Kipling",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "46",
+    "short_name": "46",
+    "long_name": "Martin Grove",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "47",
+    "short_name": "47",
+    "long_name": "Lansdowne",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "48",
+    "short_name": "48",
+    "long_name": "Rathburn",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "49",
+    "short_name": "49",
+    "long_name": "Bloor West",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "50",
+    "short_name": "50",
+    "long_name": "Burnhamthorpe",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "51",
+    "short_name": "51",
+    "long_name": "Leslie",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "52",
+    "short_name": "52",
+    "long_name": "Lawrence West",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "53",
+    "short_name": "53",
+    "long_name": "Steeles East",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "54",
+    "short_name": "54",
+    "long_name": "Lawrence East",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "55",
+    "short_name": "55",
+    "long_name": "Warren Park",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "57",
+    "short_name": "57",
+    "long_name": "Midland",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "59",
+    "short_name": "59",
+    "long_name": "Maple Leaf",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "60",
+    "short_name": "60",
+    "long_name": "Steeles West",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "61",
+    "short_name": "61",
+    "long_name": "Avenue Rd North",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "62",
+    "short_name": "62",
+    "long_name": "Mortimer",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "63",
+    "short_name": "63",
+    "long_name": "Ossington",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "64",
+    "short_name": "64",
+    "long_name": "Main",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "65",
+    "short_name": "65",
+    "long_name": "Parliament",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "66",
+    "short_name": "66",
+    "long_name": "Prince Edward",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "67",
+    "short_name": "67",
+    "long_name": "Pharmacy",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "68",
+    "short_name": "68",
+    "long_name": "Warden",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "69",
+    "short_name": "69",
+    "long_name": "Warden South",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "70",
+    "short_name": "70",
+    "long_name": "O'Connor",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "71",
+    "short_name": "71",
+    "long_name": "Runnymede",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "72",
+    "short_name": "72",
+    "long_name": "Pape",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "73",
+    "short_name": "73",
+    "long_name": "Royal York",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "74",
+    "short_name": "74",
+    "long_name": "Mount Pleasant",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "75",
+    "short_name": "75",
+    "long_name": "Sherbourne",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "76",
+    "short_name": "76",
+    "long_name": "Royal York South",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "77",
+    "short_name": "77",
+    "long_name": "Swansea",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "78",
+    "short_name": "78",
+    "long_name": "St Andrews",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "79",
+    "short_name": "79",
+    "long_name": "Scarlett Rd",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "80",
+    "short_name": "80",
+    "long_name": "Queensway",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "82",
+    "short_name": "82",
+    "long_name": "Rosedale",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "83",
+    "short_name": "83",
+    "long_name": "Jones",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "84",
+    "short_name": "84",
+    "long_name": "Sheppard West",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "85",
+    "short_name": "85",
+    "long_name": "Sheppard East",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "86",
+    "short_name": "86",
+    "long_name": "Scarborough",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "87",
+    "short_name": "87",
+    "long_name": "Cosburn",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "88",
+    "short_name": "88",
+    "long_name": "South Leaside",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "89",
+    "short_name": "89",
+    "long_name": "Weston",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "90",
+    "short_name": "90",
+    "long_name": "Vaughan",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "91",
+    "short_name": "91",
+    "long_name": "Woodbine",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "92",
+    "short_name": "92",
+    "long_name": "Woodbine South",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "93",
+    "short_name": "93",
+    "long_name": "Parkview Hills",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "94",
+    "short_name": "94",
+    "long_name": "Wellesley",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "95",
+    "short_name": "95",
+    "long_name": "York Mills",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "96",
+    "short_name": "96",
+    "long_name": "Wilson",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "97",
+    "short_name": "97",
+    "long_name": "Yonge",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "98",
+    "short_name": "98",
+    "long_name": "Willowdale-Senlac",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "99",
+    "short_name": "99",
+    "long_name": "Arrow Rd",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "100",
+    "short_name": "100",
+    "long_name": "Flemingdon Park",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "101",
+    "short_name": "101",
+    "long_name": "Downsview Park",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "102",
+    "short_name": "102",
+    "long_name": "Markham Rd",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "103",
+    "short_name": "103",
+    "long_name": "Mount Pleasant North",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "104",
+    "short_name": "104",
+    "long_name": "Faywood",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "105",
+    "short_name": "105",
+    "long_name": "Dufferin North",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "106",
+    "short_name": "106",
+    "long_name": "Sentinel",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "107",
+    "short_name": "107",
+    "long_name": "Alness-Chesswood",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "108",
+    "short_name": "108",
+    "long_name": "Driftwood",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "109",
+    "short_name": "109",
+    "long_name": "Ranee",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "110",
+    "short_name": "110",
+    "long_name": "Islington South",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "111",
+    "short_name": "111",
+    "long_name": "East Mall",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "112",
+    "short_name": "112",
+    "long_name": "West Mall",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "113",
+    "short_name": "113",
+    "long_name": "Danforth",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "114",
+    "short_name": "114",
+    "long_name": "Queens Quay East",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "115",
+    "short_name": "115",
+    "long_name": "Silver Hills",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "116",
+    "short_name": "116",
+    "long_name": "Morningside",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "117",
+    "short_name": "117",
+    "long_name": "Birchmount South",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "118",
+    "short_name": "118",
+    "long_name": "Thistle Down",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "119",
+    "short_name": "119",
+    "long_name": "Torbarrie",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "120",
+    "short_name": "120",
+    "long_name": "Calvington",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "121",
+    "short_name": "121",
+    "long_name": "Esplanade-River",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "122",
+    "short_name": "122",
+    "long_name": "Graydon Hall",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "123",
+    "short_name": "123",
+    "long_name": "Sherway",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "124",
+    "short_name": "124",
+    "long_name": "Sunnybrook",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "125",
+    "short_name": "125",
+    "long_name": "Drewry",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "126",
+    "short_name": "126",
+    "long_name": "Christie",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "127",
+    "short_name": "127",
+    "long_name": "Davenport",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "129",
+    "short_name": "129",
+    "long_name": "McCowan North",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "130",
+    "short_name": "130",
+    "long_name": "Middlefield",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "131",
+    "short_name": "131",
+    "long_name": "Nugget",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "132",
+    "short_name": "132",
+    "long_name": "Milner",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "133",
+    "short_name": "133",
+    "long_name": "Neilson",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "134",
+    "short_name": "134",
+    "long_name": "Progress",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "135",
+    "short_name": "135",
+    "long_name": "Gerrard",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "149",
+    "short_name": "149",
+    "long_name": "Etobicoke-Bloor",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "151",
+    "short_name": "151",
+    "long_name": "Leslie North",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "154",
+    "short_name": "154",
+    "long_name": "Curran Hall",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "156",
+    "short_name": "156",
+    "long_name": "Millwood",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "158",
+    "short_name": "158",
+    "long_name": "Trethewey",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "160",
+    "short_name": "160",
+    "long_name": "Bathurst North",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "161",
+    "short_name": "161",
+    "long_name": "Rogers Rd",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "162",
+    "short_name": "162",
+    "long_name": "Lawrence-Donway",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "164",
+    "short_name": "164",
+    "long_name": "Castlefield",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "165",
+    "short_name": "165",
+    "long_name": "Weston Rd North",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "166",
+    "short_name": "166",
+    "long_name": "Toryork",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "167",
+    "short_name": "167",
+    "long_name": "Pharmacy North",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "168",
+    "short_name": "168",
+    "long_name": "Symington",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "169",
+    "short_name": "169",
+    "long_name": "Huntingwood",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "171",
+    "short_name": "171",
+    "long_name": "Mount Dennis",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "184",
+    "short_name": "184",
+    "long_name": "Ancaster Park",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "185",
+    "short_name": "185",
+    "long_name": "Sheppard Central",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "189",
+    "short_name": "189",
+    "long_name": "Stockyards",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "191",
+    "short_name": "191",
+    "long_name": "Underhill",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "203",
+    "short_name": "203",
+    "long_name": "High Park",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "300",
+    "short_name": "300",
+    "long_name": "Bloor-Danforth",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "301",
+    "short_name": "301",
+    "long_name": "Queen",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "304",
+    "short_name": "304",
+    "long_name": "King",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "305",
+    "short_name": "305",
+    "long_name": "Dundas",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "306",
+    "short_name": "306",
+    "long_name": "Carlton",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "307",
+    "short_name": "307",
+    "long_name": "Bathurst",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "310",
+    "short_name": "310",
+    "long_name": "Spadina",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "312",
+    "short_name": "312",
+    "long_name": "St Clair",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "315",
+    "short_name": "315",
+    "long_name": "Evans-Brown's Line",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "316",
+    "short_name": "316",
+    "long_name": "Kingston Rd-McCowan",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "320",
+    "short_name": "320",
+    "long_name": "Yonge",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "322",
+    "short_name": "322",
+    "long_name": "Coxwell",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "324",
+    "short_name": "324",
+    "long_name": "Victoria Park",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "325",
+    "short_name": "325",
+    "long_name": "Don Mills",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "329",
+    "short_name": "329",
+    "long_name": "Dufferin",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "334",
+    "short_name": "334",
+    "long_name": "Eglinton",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "335",
+    "short_name": "335",
+    "long_name": "Jane",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "336",
+    "short_name": "336",
+    "long_name": "Finch West",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "337",
+    "short_name": "337",
+    "long_name": "Islington",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "339",
+    "short_name": "339",
+    "long_name": "Finch East",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "340",
+    "short_name": "340",
+    "long_name": "Junction",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "341",
+    "short_name": "341",
+    "long_name": "Keele",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "343",
+    "short_name": "343",
+    "long_name": "Kennedy",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "352",
+    "short_name": "352",
+    "long_name": "Lawrence West",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "353",
+    "short_name": "353",
+    "long_name": "Steeles",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "354",
+    "short_name": "354",
+    "long_name": "Lawrence East",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "363",
+    "short_name": "363",
+    "long_name": "Ossington",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "365",
+    "short_name": "365",
+    "long_name": "Parliament",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "384",
+    "short_name": "384",
+    "long_name": "Sheppard West",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "385",
+    "short_name": "385",
+    "long_name": "Sheppard East",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "386",
+    "short_name": "386",
+    "long_name": "Scarborough",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "395",
+    "short_name": "395",
+    "long_name": "York Mills",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "396",
+    "short_name": "396",
+    "long_name": "Wilson",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "400",
+    "short_name": "400",
+    "long_name": "Lawrence Manor",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "402",
+    "short_name": "402",
+    "long_name": "Parkdale",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "403",
+    "short_name": "403",
+    "long_name": "South Don Mills",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "404",
+    "short_name": "404",
+    "long_name": "East York",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "405",
+    "short_name": "405",
+    "long_name": "Etobicoke",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "406",
+    "short_name": "406",
+    "long_name": "Scarborough-Guildwood",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "501",
+    "short_name": "501",
+    "long_name": "Queen",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "503",
+    "short_name": "503",
+    "long_name": "Kingston Rd",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "504",
+    "short_name": "504",
+    "long_name": "King",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "505",
+    "short_name": "505",
+    "long_name": "Dundas",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "506",
+    "short_name": "506",
+    "long_name": "Carlton",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "507",
+    "short_name": "507",
+    "long_name": "Long Branch",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "508",
+    "short_name": "508",
+    "long_name": "Lake Shore",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "509",
+    "short_name": "509",
+    "long_name": "Harbourfront",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "510",
+    "short_name": "510",
+    "long_name": "Spadina",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "511",
+    "short_name": "511",
+    "long_name": "Bathurst",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "512",
+    "short_name": "512",
+    "long_name": "St Clair",
+    "mode": "streetcar",
+    "route_type": 0
+  },
+  {
+    "route_id": "805",
+    "short_name": "805",
+    "long_name": "Line 5 Shuttle",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "830",
+    "short_name": "830",
+    "long_name": "Henry Kelsey - Middlefield",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "900",
+    "short_name": "900",
+    "long_name": "Airport Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "902",
+    "short_name": "902",
+    "long_name": "Markham Rd Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "903",
+    "short_name": "903",
+    "long_name": "Kennedy Stn-Scarborough Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "904",
+    "short_name": "904",
+    "long_name": "Sheppard-Kennedy Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "905",
+    "short_name": "905",
+    "long_name": "Eglinton East Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "906",
+    "short_name": "906",
+    "long_name": "Airport-Humber College Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "924",
+    "short_name": "924",
+    "long_name": "Victoria Park Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "925",
+    "short_name": "925",
+    "long_name": "Don Mills Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "927",
+    "short_name": "927",
+    "long_name": "Highway 27 Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "929",
+    "short_name": "929",
+    "long_name": "Dufferin Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "935",
+    "short_name": "935",
+    "long_name": "Jane Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "937",
+    "short_name": "937",
+    "long_name": "Islington Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "938",
+    "short_name": "938",
+    "long_name": "Highland Creek Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "939",
+    "short_name": "939",
+    "long_name": "Finch Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "941",
+    "short_name": "941",
+    "long_name": "Keele Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "944",
+    "short_name": "944",
+    "long_name": "Kipling South Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "945",
+    "short_name": "945",
+    "long_name": "Kipling Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "952",
+    "short_name": "952",
+    "long_name": "Lawrence West Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "953",
+    "short_name": "953",
+    "long_name": "Steeles East Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "954",
+    "short_name": "954",
+    "long_name": "Lawrence East Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "960",
+    "short_name": "960",
+    "long_name": "Steeles West Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "968",
+    "short_name": "968",
+    "long_name": "Warden Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "984",
+    "short_name": "984",
+    "long_name": "Sheppard West Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "985",
+    "short_name": "985",
+    "long_name": "Sheppard East Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "986",
+    "short_name": "986",
+    "long_name": "Scarborough Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "989",
+    "short_name": "989",
+    "long_name": "Weston Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "995",
+    "short_name": "995",
+    "long_name": "York Mills Express",
+    "mode": "bus",
+    "route_type": 3
+  },
+  {
+    "route_id": "996",
+    "short_name": "996",
+    "long_name": "Wilson Express",
+    "mode": "bus",
+    "route_type": 3
+  }
+]

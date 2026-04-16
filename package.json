@@ -1,0 +1,40 @@
+{
+  "name": "ttc-watcher",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "server.ts",
+  "scripts": {
+    "dev": "tsx watch server.ts",
+    "build": "next build",
+    "start": "NODE_ENV=production tsx server.ts",
+    "db:wipe": "tsx scripts/wipe-db.ts",
+    "import-gtfs": "tsx scripts/import-gtfs.ts",
+    "db:setup": "npm run db:wipe && npm run import-gtfs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.9.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "gtfs-realtime-bindings": "^1.1.1",
+    "leaflet": "^1.9.4",
+    "next": "^15.3.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/leaflet": "^1.9.21",
+    "@types/node": "^22.14.1",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3"
+  },
+  "license": "ISC"
+}
