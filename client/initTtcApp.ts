@@ -865,7 +865,8 @@ async function syncHistoryPathOverlays() {
   const pinned = lines.filter((l) => l.pinned).map((l) => l.routeId);
   const fromSelectedStop =
     selectedStopId && servingRouteIdsForSelectedStop?.length ? servingRouteIdsForSelectedStop : [];
-  const routeIds = [...new Set([...pinned, ...fromSelectedStop])];
+  const fromSelectedRoute = selectedRouteId ? [selectedRouteId] : [];
+  const routeIds = [...new Set([...pinned, ...fromSelectedStop, ...fromSelectedRoute])];
   const key = routeIds.slice().sort().join(',');
   if (key === lastHistoryPathRoutesKey) return;
   lastHistoryPathRoutesKey = key;
