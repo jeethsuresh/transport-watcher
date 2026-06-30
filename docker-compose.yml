@@ -1,0 +1,19 @@
+services:
+  app:
+    build: .
+    image: ttc-watcher:latest
+    container_name: ttc-watcher
+    ports:
+      - "${HOST_PORT:-3010}:3010"
+    environment:
+      NODE_ENV: production
+      PORT: "3010"
+      SQLITE_PATH: /app/data/ttc-watcher.db
+      VEHICLE_LOCATIONS_SQLITE_PATH: /app/data/vehicle-locations.db
+    volumes:
+      - ttc-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  ttc-data:
+    driver: local
