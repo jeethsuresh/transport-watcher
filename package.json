@@ -11,7 +11,7 @@
     "db:wipe": "tsx scripts/wipe-db.ts",
     "import-gtfs": "tsx scripts/import-gtfs.ts",
     "db:setup": "npm run db:wipe && npm run import-gtfs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --import tsx/esm --test tests/gtfsCsv.test.ts tests/myttc.test.ts tests/snapshot.test.ts tests/stopHeadway.test.ts tests/ui.test.ts"
   },
   "dependencies": {
     "better-sqlite3": "^12.9.0",
