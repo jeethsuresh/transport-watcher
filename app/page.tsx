@@ -11,22 +11,26 @@ export default function HomePage() {
     <div className="app" id="app-root">
       <section className="detail" aria-label="Map and routes">
         <div id="map" role="application" aria-label="Vehicle map" />
-        <button
-          type="button"
-          id="sidebar-toggle"
-          className="map-drawer-toggle"
-          aria-expanded={false}
-          aria-controls="app-sidebar"
-          title="Open routes and stops"
-        >
-          <span className="map-drawer-toggle__icon" aria-hidden="true" />
-          <span className="map-drawer-toggle__label">Menu</span>
-        </button>
+        <div className="map-top-bar">
+          <button
+            type="button"
+            id="sidebar-toggle"
+            className="map-drawer-toggle"
+            aria-expanded={false}
+            aria-controls="app-sidebar"
+            title="Open routes and stops"
+          >
+            <span className="map-drawer-toggle__icon" aria-hidden="true" />
+            <span className="map-drawer-toggle__label">Menu</span>
+          </button>
+          <div className="map-title-panel" aria-label="App title">
+            <h1 className="map-title-panel__title">TTC Watcher</h1>
+          </div>
+        </div>
         <div id="sidebar-backdrop" className="sidebar-backdrop" hidden aria-hidden="true" />
         <aside id="app-sidebar" className="sidebar sidebar--drawer" aria-label="Routes and stops">
           <div className="sidebar__head">
             <div className="sidebar__head-row">
-              <h1 className="title">TTC Watcher</h1>
               <button type="button" id="sidebar-close" className="sidebar-close" aria-label="Close menu">
                 ×
               </button>
