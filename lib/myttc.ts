@@ -1,6 +1,6 @@
 const MYTTC_UA =
   process.env.MYTTC_USER_AGENT ||
-  'Mozilla/5.0 (compatible; TTC-Watcher/1.0; +https://github.com/)';
+  'Mozilla/5.0 (compatible; Jeeths-TTC-Watcher/1.0; +https://github.com/)';
 
 export const DEFAULT_STATIONS = (process.env.MYTTC_STATIONS || 'spadina_station,finch_station,union_station')
   .split(',')

@@ -1,4 +1,4 @@
-# TTC Watcher
+# Jeeth's TTC Watcher
 
 Web app for browsing Toronto Transit Commission (TTC) routes with live vehicle positions (GTFS-RT), optional MyTTC schedule hints, SQLite history, and Socket.IO updates.
 
