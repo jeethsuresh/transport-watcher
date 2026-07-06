@@ -58,13 +58,13 @@ COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nodejs:nodejs /app/.next ./.next
 COPY --from=builder --chown=nodejs:nodejs /app/public ./public
 
-COPY --chown=nodejs:nodejs package.json package-lock.json ./
-COPY --chown=nodejs:nodejs server.ts next.config.ts tsconfig.json next-env.d.ts ./
-COPY --chown=nodejs:nodejs lib ./lib
-COPY --chown=nodejs:nodejs app ./app
-COPY --chown=nodejs:nodejs client ./client
-COPY --chown=nodejs:nodejs scripts ./scripts
-COPY --chown=nodejs:nodejs data ./data
+COPY --from=builder --chown=nodejs:nodejs /app/package.json /app/package-lock.json ./
+COPY --from=builder --chown=nodejs:nodejs /app/server.ts /app/next.config.ts /app/tsconfig.json /app/next-env.d.ts ./
+COPY --from=builder --chown=nodejs:nodejs /app/lib ./lib
+COPY --from=builder --chown=nodejs:nodejs /app/app ./app
+COPY --from=builder --chown=nodejs:nodejs /app/client ./client
+COPY --from=builder --chown=nodejs:nodejs /app/scripts ./scripts
+COPY --from=builder --chown=nodejs:nodejs /app/data ./data
 
 USER nodejs
 

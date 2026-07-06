@@ -100,7 +100,7 @@ a {
 
 .map-top-bar {
   position: absolute;
-  z-index: 700;
+  z-index: 1000;
   top: 12px;
   left: 12px;
   display: flex;

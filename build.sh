@@ -3,4 +3,4 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-docker compose build
+docker build -t localhost/ttc-watcher:latest .

@@ -3,4 +3,5 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-docker compose up -d
+./build.sh
+docker compose up -d --force-recreate
