@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd "$(dirname "$0")"
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT"
 
-export COMPOSE_BAKE=false
+# shellcheck source=scripts/compose-env.sh
+source "$ROOT/scripts/compose-env.sh"
+parse_compose_args "$@"
 
-docker compose build "$@"
+docker compose "${COMPOSE_GLOBAL_ARGS[@]}" build "${COMPOSE_CMD_ARGS[@]}"

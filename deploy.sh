@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd "$(dirname "$0")"
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT"
 
-export COMPOSE_BAKE=false
+# shellcheck source=scripts/compose-env.sh
+source "$ROOT/scripts/compose-env.sh"
+parse_compose_args "$@"
 
-PROJECT=ttc-watcher
+PROJECT="$COMPOSE_PROJECT"
 NETWORK="${PROJECT}_default"
 
 cleanup_stale_resources() {
@@ -28,6 +31,6 @@ cleanup_stale_resources() {
 }
 
 cleanup_stale_resources
-./build.sh "$@"
-docker compose down --remove-orphans 2>/dev/null || true
-docker compose up -d --force-recreate --no-build
+docker compose "${COMPOSE_GLOBAL_ARGS[@]}" build "${COMPOSE_CMD_ARGS[@]}"
+docker compose "${COMPOSE_GLOBAL_ARGS[@]}" down --remove-orphans 2>/dev/null || true
+docker compose "${COMPOSE_GLOBAL_ARGS[@]}" up -d --force-recreate --no-build
