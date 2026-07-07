@@ -1,3 +1,5 @@
+name: ttc-watcher
+
 services:
   app:
     build: .

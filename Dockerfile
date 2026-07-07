@@ -1,17 +1,16 @@
-# ttc-watcher — Next.js UI + Express API + Socket.IO + SQLite poller
+# Jeeth's TTC Watcher — Next.js UI + Express API + Socket.IO + SQLite poller
 #
-# Build:
-#   docker build -t ttc-watcher .
+# Build and run with Compose (project name: ttc-watcher):
+#   docker compose build
+#   docker compose up -d
+#
+# Or: ./build.sh && ./deploy.sh
 #
 # Run (persist DB on the host):
 #   docker run --rm -p 3010:3010 \
-#     -v ttc-data:/app/data \
+#     -v ttc-watcher_ttc-data:/app/data \
 #     -e SQLITE_PATH=/app/data/ttc-watcher.db \
-#     ttc-watcher
-#
-# Optional: import GTFS once (large download + unzip inside container):
-#   docker run --rm -v ttc-data:/app/data -e SQLITE_PATH=/app/data/ttc-watcher.db ttc-watcher \
-#     npx tsx scripts/import-gtfs.ts
+#     ttc-watcher:latest
 
 # -----------------------------------------------------------------------------
 # 1. Install dependencies (cached while package-lock.json unchanged)
