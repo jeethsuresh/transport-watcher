@@ -1,4 +1,4 @@
-# Jeeth's TTC Watcher — Next.js UI + Express API + Socket.IO + SQLite poller
+# Awesome TTC Watcher — Next.js UI + Express API + Socket.IO + SQLite poller
 #
 # Build and run with Compose (project name: ttc-watcher):
 #   docker compose build
