@@ -9,6 +9,7 @@ parse_compose_args() {
   COMPOSE_PROJECT="$(compose_default_project)"
   COMPOSE_GLOBAL_ARGS=()
   COMPOSE_CMD_ARGS=()
+  HOST_PORT="${HOST_PORT:-3010}"
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -37,6 +38,17 @@ parse_compose_args() {
         COMPOSE_GLOBAL_ARGS+=(--project-directory "$2")
         shift 2
         ;;
+      --host-port)
+        [[ $# -ge 2 ]] || {
+          echo "error: $1 requires a value" >&2
+          return 1
+        }
+        HOST_PORT="$2"
+        shift 2
+        ;;
+      --detach)
+        shift
+        ;;
       *)
         COMPOSE_CMD_ARGS+=("$1")
         shift
@@ -46,4 +58,5 @@ parse_compose_args() {
 
   export COMPOSE_PROJECT
   export COMPOSE_BAKE=false
+  export HOST_PORT
 }
