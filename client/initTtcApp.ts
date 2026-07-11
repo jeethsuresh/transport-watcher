@@ -1375,7 +1375,7 @@ export async function mountTtcWatcher(): Promise<void> {
     !panelStops ||
     !stopSearchEl
   ) {
-    console.error('Awesome TTC Watcher: required DOM nodes missing');
+    console.error('TTC Watcher: required DOM nodes missing');
     return;
   }
 

@@ -256,7 +256,7 @@ async function main() {
   });
 
   httpServer.listen(PORT, () => {
-    console.log(`Awesome TTC Watcher http://localhost:${PORT}`);
+    console.log(`TTC Watcher http://localhost:${PORT}`);
   });
 
   poller.start();

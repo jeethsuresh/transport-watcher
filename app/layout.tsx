@@ -3,7 +3,7 @@ import 'leaflet/dist/leaflet.css';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Awesome TTC Watcher',
+  title: 'TTC Watcher',
   description: 'Live TTC vehicles (GTFS-RT), routes, and stops',
 };
 

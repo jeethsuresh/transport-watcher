@@ -24,7 +24,7 @@ export default function HomePage() {
             <span className="map-drawer-toggle__label">Menu</span>
           </button>
           <div className="map-title-panel" aria-label="App title">
-            <h1 className="map-title-panel__title">Awesome TTC Watcher</h1>
+            <h1 className="map-title-panel__title">TTC Watcher</h1>
           </div>
         </div>
         <div id="sidebar-backdrop" className="sidebar-backdrop" hidden aria-hidden="true" />
