@@ -23,7 +23,7 @@ cleanup_stale_resources() {
     fi
   fi
 
-  # container_name is fixed in compose; remove leftovers from prior manual runs.
+  # container_name follows COMPOSE_PROJECT; remove leftovers from prior runs.
   docker rm -f "$PROJECT" "${PROJECT}_app_1" 2>/dev/null || true
 
   # Old manual builds used localhost/ttc-watcher:latest and can shadow compose's image.

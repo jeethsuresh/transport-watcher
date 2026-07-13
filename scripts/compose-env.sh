@@ -57,6 +57,7 @@ parse_compose_args() {
   done
 
   export COMPOSE_PROJECT
+  export COMPOSE_CONTAINER_NAME="$COMPOSE_PROJECT"
   export COMPOSE_BAKE=false
   export HOST_PORT
 }

@@ -4,7 +4,7 @@ services:
   app:
     build: .
     image: ttc-watcher:latest
-    container_name: ttc-watcher
+    container_name: ${COMPOSE_CONTAINER_NAME:-ttc-watcher}
     ports:
       - "${HOST_PORT:-3010}:3010"
     environment:
